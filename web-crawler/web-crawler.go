@@ -11,6 +11,12 @@ type Fetcher interface {
 	Fetch(url string) (body string, urls []string, err error)
 }
 
+func main() {
+	for oneResult := range startCrawl("https://golang.org/", 4, fetcher) {
+		fmt.Println(oneResult)
+	}
+}
+
 func startCrawl(url string, depth int, fetcher Fetcher) chan string {
 	j := &jobInfo{
 		foundURLs: make(map[string]struct{}),
@@ -74,12 +80,6 @@ func checkURL(j *jobInfo, url string) bool {
 	}
 	j.foundURLs[url] = struct{}{}
 	return true
-}
-
-func main() {
-	for oneResult := range startCrawl("https://golang.org/", 4, fetcher) {
-		fmt.Println(oneResult)
-	}
 }
 
 // fakeFetcher is Fetcher that returns canned results.
